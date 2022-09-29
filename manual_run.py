@@ -112,14 +112,14 @@ def compaire_all_files_in_dir (sol_dir, language, cod, out_file):
                 print(res[i][j], "\n")
 
 
-def check_in_uploaded_files(filename):
+def check_in_uploaded_files(filename, suspect_filename):
     dir_name = filename.split('.')[0]
     with zipfile.ZipFile(f"uploads/{filename}", 'r') as zip_ref:
         zip_ref.extractall(f"uploads/")
     sol_dir = f"uploads/{dir_name}"
     print(sol_dir)
     language = language_identification(sol_dir)
-    out_file = open(f"uploads/suspects_{dir_name}.json", "w")
+    out_file = open(suspect_filename, "w")
 
     compaire_all_files_in_dir(sol_dir, language, 'utf-8', out_file)
 
