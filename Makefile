@@ -8,4 +8,4 @@ app_down:
 	docker-compose down
 
 test:
-	python3 testsmadke /send_test_archive.py
+	python3 tests/send_test_archive.py
