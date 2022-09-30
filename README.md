@@ -1,4 +1,23 @@
-send test zip archive to server:
+# REST API anti-plagiarism
+
+## Разобранны следующие операции:
+- POST:      /file-upload            - Загружает zip архив с программами и проверяет их на плагиат.
+
+### Для запуска приложения:
 ```
-curl -X POST -F 'file=@programs/different_qsort_solutions.zip' http://127.0.0.1:5000/file-upload
+make build && make run
+```
+
+### Если требуется прекратить работу сервиса:
+```
+make db_down
+```
+
+### To send test zip archive to server:
+```
+make test
+```
+or
+```
+curl -X POST -F 'file=@programs/different_qsort_solutions.zip' http://127.0.0.1:80/file-upload
 ```
