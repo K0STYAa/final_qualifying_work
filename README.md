@@ -10,7 +10,7 @@ make build && make run
 
 ### Если требуется прекратить работу сервиса:
 ```
-make db_down
+make app_down
 ```
 
 ### To send test zip archive to server:
