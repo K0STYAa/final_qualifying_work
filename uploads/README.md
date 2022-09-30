@@ -1,1 +1,1 @@
-directory to upload zip files
+# Folder for upload zip files
