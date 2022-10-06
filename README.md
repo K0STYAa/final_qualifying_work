@@ -31,3 +31,6 @@ make app_down
     ```
 
 - send through [graphic interface](http://127.0.0.1/).
+
+![Upload files](.photos/1.png)
+![Example of output](.photos/2.png)
