@@ -55,18 +55,6 @@
                 {% for record in records %}
                 <tr>
                     {% for col in colnames %}
-                        
-                        <!--[if record[col] > lim]>
-                            <style>
-                                td{
-                                    width: 40px; 
-                                    height: 20px;
-                                    color: red; 
-                                    border: solid 1px silver; 
-                                    text-align: center;
-                                }
-                            </style>
-                        <![endif]-->
                         <td>{{ record[col] }}</td>
                     {% endfor %}
                 </tr>

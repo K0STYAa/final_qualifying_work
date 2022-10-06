@@ -22,12 +22,12 @@ make app_down
     ```
 
 - ```
-    curl -X POST -F 'file=@programs/different_qsort_solutions.zip' http://127.0.0.1:80/file-upload
+    curl -X POST -F 'file=@programs/different_qsort_solutions.zip' http://127.0.0.1/file-upload
     ```
 ### Or send your own archive:
 - using a request similar to the above
     ```
-    curl -X POST -F 'file=@path/to/your/archive.zip' http://127.0.0.1:80/file-upload
+    curl -X POST -F 'file=@path/to/your/archive.zip' http://127.0.0.1/file-upload
     ```
 
-- send through [graphic interface](http://127.0.0.1:80/).
+- send through [graphic interface](http://127.0.0.1/).
