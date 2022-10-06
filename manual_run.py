@@ -138,13 +138,13 @@ def main():
 
     if todo == 'python': # Python
         sol_dir = 'programs/different_qsort_solutions/'
-        compaire_all_files_in_dir(sol_dir, 'python', 'utf-8', f)
+        compaire_all_files_in_dir(sol_dir, 'python', 'utf-8')
 
     else:
         try:
             sol_dir = 'programs/' + todo 
             language = language_identification(sol_dir)
-            compaire_all_files_in_dir(sol_dir, language, 'utf-8', f)
+            compaire_all_files_in_dir(sol_dir, language, 'utf-8')
         except Exception as err: 
             print("Incorrect argument. " + str(err))
     
@@ -157,7 +157,6 @@ def main():
 
 
 # Start program
-f = open("suspects.json", "w")
 dict_counter = collections.Counter()
-main()
-f.close()
+if __name__=="__main__":
+    main()
