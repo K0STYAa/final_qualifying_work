@@ -55,7 +55,9 @@ def compaire (source1, source2):
         if source1[i] in source2:
             same += 1
 
-    return round(same*2/float(len(source1) + len(source2))*100, 2)
+    value = round(same*2/float(len(source1) + len(source2))*100, 2)
+
+    return value
 
 
 def shingle_compaire_2_files (filename1, filename2, cod):

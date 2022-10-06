@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Anti-Plagiarism System</title>
+        <style>
+            /* table{
+                counter-reset: rowNumber;
+            }
+            table tr::before {
+            display: table-cell;
+            counter-increment: rowNumber;
+            content: counter(rowNumber);
+            padding-right: 0.3em;
+            text-align: right;
+            } */
+            td{
+                width: 40px;
+                height: 20px;
+                border: solid 1px silver;
+                text-align: center;
+            }
+            .btn {
+                display: inline-block;
+                background: #126bba;
+                color: rgb(255, 255, 255);
+                padding: 0.5rem 1.5rem;
+                text-decoration: none;
+                border-radius: 3px;
+            }
+        </style>
+    </head>
+    <body>
+        <p align="center">
+            <a href="/file-upload" class="btn">Send another file</a>
+        </p>
+        <h1>
+            {{output["folder"]}}
+        </h1>
+        <h3>Program files at archive:</h3>
+        {% for item in output["file_accordance"] %}
+            {% for key, value in item.items() %}
+                <div> {{ key }}: {{ value }} </div>
+            {% endfor %}
+        {% endfor %}<br>
+        <table border="1">
+            <thead>
+                <tr>
+                    {% for col in colnames %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    {% for col in colnames %}
+                        
+                        <!--[if record[col] > lim]>
+                            <style>
+                                td{
+                                    width: 40px; 
+                                    height: 20px;
+                                    color: red; 
+                                    border: solid 1px silver; 
+                                    text-align: center;
+                                }
+                            </style>
+                        <![endif]-->
+                        <td>{{ record[col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3>Suspects (first suspect, second suspect and similarity):</h3>
+        {% for item in output["suspects"] %}
+            {% for key, value in item.items() %}
+                <div> {{ value }} </div>
+            {% endfor %}<br>
+        {% endfor %}
+
+    </body>
+</html>

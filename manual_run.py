@@ -13,7 +13,7 @@ import json
 from shingles_algorithm import shingle_compaire_2_files
 
 import time
-
+import constant
 
 language_dict = {
     'python': [".py"],
@@ -21,8 +21,6 @@ language_dict = {
     'pascal': [".PAS", ".pas"],
     'assembler': [".ASM", ".asm"]
 }
-
-lim = 20 # Показатель сходства выше которого программа возвращает совпадающие файлы
 
 
 def files_list_in_dir (sol_dir, language):
@@ -58,20 +56,22 @@ def language_identification (sol_dir):
         raise Exception("No such directory exists.")
 
 
-def compaire_all_files_in_dir (sol_dir, language, cod, out_file):
+def compaire_all_files_in_dir (sol_dir, language, cod):
 
-    for _ in range(150):
-        print("#", end="")
-    print("\n")
-    print(sol_dir, "\n")
+    response = {}
+    tmp = sol_dir.split('/')
+    response["folder"] = tmp[len(tmp)-1]
     filenames_list = files_list_in_dir(sol_dir, language)
+    files_arr = []
     for i in range(len(filenames_list)):
-        print(i,":", filenames_list[i])
+        name = filenames_list[i].split('/')
+        files_arr.append({i: name[len(name)-1]})
+    response["file_accordance"] = files_arr
 
-    res = []
-    res_arr = []
+    df_output = []
+    suspects = []
     for _ in range(len(filenames_list)):
-        res.append([0] * len(filenames_list))
+        df_output.append([0] * len(filenames_list))
 
     for filename1_number in range(len(filenames_list)):
         for filename2_number in range(filename1_number, len(filenames_list)):
@@ -86,48 +86,41 @@ def compaire_all_files_in_dir (sol_dir, language, cod, out_file):
                 name1 = name1[len(name1)-1]
                 name2 = filename2.split('/')
                 name2 = name2[len(name2)-1]
-                if new_value >= lim: 
+                if new_value >= constant.LIM: 
                     addDict = {"1st_suspect":name1, "2nd_suspect":name2, "similarity": new_value}
-                    res_arr.append(addDict)
+                    suspects.append(addDict)
 
-                res[filename1_number][filename2_number] = new_value
+                df_output[filename1_number][filename2_number] = new_value
+                
                 new_dict = collections.Counter()
                 new_dict[new_value] = 1
                 dict_counter.update(new_dict)
 
-    data = {"suspects": res_arr}
-    jsonString = json.dumps(data)
-    out_file.write(jsonString)
 
-    df = pd.DataFrame(res)
-    print()
-    display(df)
-    print()
+    response["suspects"] = suspects
 
-    for i in range(len(res)):
-        for j in range(len(res[i])):
-            if res[i][j] >= lim:
-                print(i,":", filenames_list[i])
-                print(j,":", filenames_list[j])
-                print(res[i][j], "\n")
+    df = pd.DataFrame(df_output)
+    # display(df)
+    # print(response)
+
+    return(response, df)
 
 
-def check_in_uploaded_files(filename, suspect_filename):
+def check_in_uploaded_files(filename):
     dir_name = filename.split('.')[0]
     with zipfile.ZipFile(f"uploads/{filename}", 'r') as zip_ref:
         zip_ref.extractall(f"uploads/")
     sol_dir = f"uploads/{dir_name}"
-    print(sol_dir)
     language = language_identification(sol_dir)
-    out_file = open(suspect_filename, "w")
 
-    compaire_all_files_in_dir(sol_dir, language, 'utf-8', out_file)
-
-    out_file.close()
+    response, df = compaire_all_files_in_dir(sol_dir, language, 'utf-8')
 
     # delete_all_files_and_dir
     os.remove(f"uploads/{filename}")
     shutil.rmtree(f"uploads/{dir_name}")
+
+    return response, df
+
 
 
 def main():
