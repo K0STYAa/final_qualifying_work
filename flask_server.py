@@ -9,7 +9,7 @@ UPLOAD_FOLDER = 'uploads/'
 app = Flask(__name__)
 app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024 # 4*1024*1024 bytes == 4 Mbytes
+app.config['MAX_CONTENT_LENGTH'] = constant.MAX_CONTENT_LENGTH
 
 ALLOWED_EXTENSIONS = set(['zip'])
 

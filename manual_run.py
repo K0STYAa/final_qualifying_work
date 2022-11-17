@@ -51,6 +51,8 @@ def language_identification (sol_dir):
                     for extension in extension_list:
                         if extension == file_extension:
                             return language
+            if os.path.isdir(fullname):
+                 return language_identification(fullname)
         raise Exception("No program files in directory.")
     else:
         raise Exception("No such directory exists.")
@@ -108,8 +110,9 @@ def compaire_all_files_in_dir (sol_dir, language, cod):
 
 def check_in_uploaded_files(filename):
     dir_name = filename.split('.')[0]
+    print(dir_name)
     with zipfile.ZipFile(f"uploads/{filename}", 'r') as zip_ref:
-        zip_ref.extractall(f"uploads/")
+        zip_ref.extractall(f"uploads/{dir_name}")
     sol_dir = f"uploads/{dir_name}"
     language = language_identification(sol_dir)
 
