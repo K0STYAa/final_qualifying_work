@@ -40,7 +40,7 @@ def upload_file():
 
         comments_ignore = not request.form.get('comments')
         table_ignore = not request.form.get('table')
-        lim = float(request.form.get('lim'))
+        lim = float(request.form.get('lim') or constant.DEFAULT_LIM)
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
