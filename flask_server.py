@@ -11,10 +11,9 @@ app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = constant.MAX_CONTENT_LENGTH
 
-ALLOWED_EXTENSIONS = set(['zip'])
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in constant.ALLOWED_EXTENSIONS
 
 @app.route("/")
 def hello():
@@ -39,15 +38,21 @@ def upload_file():
             resp.status_code = 400
             return resp
 
+        comments_ignore = not request.form.get('comments')
+        table_ignore = not request.form.get('table')
+        lim = float(request.form.get('lim'))
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            data, df = check_in_uploaded_files(filename)
+            data, df = check_in_uploaded_files(filename, lim, comments_ignore)
 
             temp = df.to_dict('records')
             columnNames = df.columns.values
-            return render_template('record.html', records=temp, colnames=columnNames, output=data, lim=constant.LIM)
+            if table_ignore:
+                return render_template('record.html', output=data, lim=lim)
+            return render_template('record.html', records=temp, colnames=columnNames, output=data, lim=lim)
         else:
             resp = jsonify({'message' : 'Allowed only zip files'})
             resp.status_code = 400

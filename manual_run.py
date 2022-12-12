@@ -58,7 +58,7 @@ def language_identification (sol_dir):
         raise Exception("No such directory exists.")
 
 
-def compaire_all_files_in_dir (sol_dir, language, cod):
+def compaire_all_files_in_dir (sol_dir, language, cod, lim, comments_ignore=True):
 
     response = {}
     tmp = sol_dir.split('/')
@@ -81,14 +81,14 @@ def compaire_all_files_in_dir (sol_dir, language, cod):
                 filename1=filenames_list[filename1_number]
                 filename2=filenames_list[filename2_number]
                 
-                new_value = shingle_compaire_2_files(filename1, filename2, cod)
+                new_value = shingle_compaire_2_files(filename1, filename2, cod, comments_ignore)
 
                 # Write in out_file
                 name1 = filename1.split('/')
                 name1 = name1[len(name1)-1]
                 name2 = filename2.split('/')
                 name2 = name2[len(name2)-1]
-                if new_value >= constant.LIM: 
+                if new_value >= lim: 
                     addDict = {"1st_suspect":name1, "2nd_suspect":name2, "similarity": new_value}
                     suspects.append(addDict)
 
@@ -108,15 +108,14 @@ def compaire_all_files_in_dir (sol_dir, language, cod):
     return(response, df)
 
 
-def check_in_uploaded_files(filename):
+def check_in_uploaded_files(filename, lim, comments_ignore=True):
     dir_name = filename.split('.')[0]
-    print(dir_name)
     with zipfile.ZipFile(f"uploads/{filename}", 'r') as zip_ref:
         zip_ref.extractall(f"uploads/{dir_name}")
     sol_dir = f"uploads/{dir_name}"
     language = language_identification(sol_dir)
 
-    response, df = compaire_all_files_in_dir(sol_dir, language, 'utf-8')
+    response, df = compaire_all_files_in_dir(sol_dir, language, 'utf-8', lim, comments_ignore)
 
     # delete_all_files_and_dir
     os.remove(f"uploads/{filename}")
