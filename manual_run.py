@@ -83,12 +83,12 @@ def compaire_all_files_in_dir (sol_dir, language, cod, lim, comments_ignore=True
                 
                 new_value = shingle_compaire_2_files(filename1, filename2, cod, comments_ignore)
 
-                # Write in out_file
+                # Write suspects
                 name1 = filename1.split('/')
                 name1 = name1[len(name1)-1]
                 name2 = filename2.split('/')
                 name2 = name2[len(name2)-1]
-                if new_value >= lim: 
+                if new_value >= lim:
                     addDict = {"1st_suspect":name1, "2nd_suspect":name2, "similarity": new_value}
                     suspects.append(addDict)
 

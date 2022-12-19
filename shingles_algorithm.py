@@ -33,13 +33,28 @@ def genshingle (source, shingleLen):
     return out
 
 
-def compaire (source1, source2):
+def shingle_compaire (source1, source2):
     same = 0
     for i in range(len(source1)):
         if source1[i] in source2:
             same += 1
 
     value = round(same*2/float(len(source1) + len(source2))*100, 2)
+
+    return value
+
+
+def Jaccard_index_compare (source1, source2):
+    same = []
+    for i in range(len(source1)):
+        if source1[i] in source2:
+            same.append(source1[i])
+    same_count = len(set(same))
+
+    source = source1 + source2
+    source_count = len(set(source))
+
+    value = round(float(same_count)/source_count*100, 2)
 
     return value
 
@@ -52,6 +67,7 @@ def shingle_compaire_2_files (filename1, filename2, cod, comments_ignore=True):
     cmp1 = genshingle(text1, constant.SHINGLE_LEN)
     cmp2 = genshingle(text2, constant.SHINGLE_LEN)
 
-    res = compaire(cmp1,cmp2)
+    res = shingle_compaire(cmp1,cmp2)
+    # res = Jaccard_index_compare(cmp1,cmp2)
 
     return res
