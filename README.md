@@ -21,7 +21,7 @@ make test
 - using a cURL request
     ```
     curl -X POST \
-        -F 'algorithm=shingle(or jaccard or Otsuka Ochiai measure)' \
+        -F 'algorithm=shingle(or jaccard or ochiai or levenshtein)' \
         -F 'file=@your/path/to/file.zip' \
         http://127.0.0.1:80/file-upload
     ```

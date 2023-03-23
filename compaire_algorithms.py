@@ -3,6 +3,7 @@ import os
 import codecs
 import re
 import constant
+import editdistance
 
 def get_text (filename, cod, comments_ignore):
 
@@ -89,3 +90,14 @@ def Ochiai_compaire_2_files (filename1, filename2, cod, comments_ignore=True):
     cmp2 = genshingle(text2, constant.NGRAM_LEN)
 
     return Otsuka_Ochiai_square_coefficient(cmp1,cmp2)
+
+
+def Levenshtein_distance_compaire_2_files (filename1, filename2, cod, comments_ignore=True):
+
+    text1 = get_text(filename1, cod, comments_ignore) # Текст 1 для сравнения
+    text2 = get_text(filename2, cod, comments_ignore) # Текст 2 для сравнения
+
+    distance = editdistance.eval(text1, text2)
+    source_len = max(len(text1), len(text2))
+
+    return round(float(source_len - distance)/source_len*100, 2)
