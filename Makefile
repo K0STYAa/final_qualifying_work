@@ -1,11 +1,8 @@
 build:
-	docker-compose build
+	docker build -t fqw .
 
 run:
-	docker-compose up
-
-app_down:
-	docker-compose down
+	docker run -p 80:5000 -d fqw
 
 test:
 	python3 tests/send_test_archive.py

@@ -19,6 +19,11 @@
         <form method=post enctype=multipart/form-data>
             <input type=file name=file>
             <input type=submit value=Upload><Br> 
+            <select name="algorithm" id="algorithm-select" required>
+                <option value="">--Please choose compaire algorithm--</option>
+                <option value="shingle">Shingle algorithm</option>
+                <option value="jaccard">Jaccard algorithm</option>
+            </select><Br>
             <input type="checkbox" name="comments" value="True">Keep comments<Br> 
             <input type="checkbox" name="table" value="True">Show table<Br>
             <label> The critical part of the similarity: </label>

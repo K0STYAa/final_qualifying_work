@@ -40,13 +40,14 @@ def upload_file():
 
         comments_ignore = not request.form.get('comments')
         table_ignore = not request.form.get('table')
+        algorithm = request.form.get('algorithm')
         lim = float(request.form.get('lim') or constant.DEFAULT_LIM)
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            data, df = check_in_uploaded_files(filename, lim, comments_ignore)
+            data, df = check_in_uploaded_files(filename, algorithm, lim, comments_ignore)
 
             temp = df.to_dict('records')
             columnNames = df.columns.values

@@ -4,13 +4,13 @@ import os
 import sys
 from tabnanny import check
 import pandas as pd
-from IPython.display import display
+# from IPython.display import display
 import collections
 import zipfile
 import shutil
 import json
 
-from shingles_algorithm import shingle_compaire_2_files
+import compaire_algorithms
 
 import time
 import constant
@@ -20,6 +20,11 @@ language_dict = {
     'C': [".c"],
     'pascal': [".PAS", ".pas"],
     'assembler': [".ASM", ".asm"]
+}
+
+algorithm_func_dict = {
+    'shingle': 'shingle_compaire_2_files',
+    'jaccard': 'Jaccard_compaire_2_files'
 }
 
 
@@ -58,7 +63,7 @@ def language_identification (sol_dir):
         raise Exception("No such directory exists.")
 
 
-def compaire_all_files_in_dir (sol_dir, language, cod, lim, comments_ignore=True):
+def compaire_all_files_in_dir (sol_dir, algorithm, language, cod, lim, comments_ignore=True):
 
     response = {}
     tmp = sol_dir.split('/')
@@ -81,7 +86,8 @@ def compaire_all_files_in_dir (sol_dir, language, cod, lim, comments_ignore=True
                 filename1=filenames_list[filename1_number]
                 filename2=filenames_list[filename2_number]
                 
-                new_value = shingle_compaire_2_files(filename1, filename2, cod, comments_ignore)
+                compaire_2_files = getattr(compaire_algorithms, algorithm_func_dict[algorithm])
+                new_value = compaire_2_files(filename1, filename2, cod, comments_ignore)
 
                 # Write suspects
                 name1 = filename1.split('/')
@@ -108,14 +114,14 @@ def compaire_all_files_in_dir (sol_dir, language, cod, lim, comments_ignore=True
     return(response, df)
 
 
-def check_in_uploaded_files(filename, lim, comments_ignore=True):
+def check_in_uploaded_files(filename, algorithm, lim, comments_ignore=True):
     dir_name = filename.split('.')[0]
     with zipfile.ZipFile(f"uploads/{filename}", 'r') as zip_ref:
         zip_ref.extractall(f"uploads/{dir_name}")
     sol_dir = f"uploads/{dir_name}"
     language = language_identification(sol_dir)
 
-    response, df = compaire_all_files_in_dir(sol_dir, language, 'utf-8', lim, comments_ignore)
+    response, df = compaire_all_files_in_dir(sol_dir, algorithm, language, 'utf-8', lim, comments_ignore)
 
     # delete_all_files_and_dir
     os.remove(f"uploads/{filename}")
@@ -140,13 +146,13 @@ def main():
 
     if todo == 'python': # Python
         sol_dir = 'programs/different_qsort_solutions/'
-        compaire_all_files_in_dir(sol_dir, 'python', 'utf-8')
+        compaire_all_files_in_dir(sol_dir, "shingle", 'python', 'utf-8', 20, True)
 
     else:
         try:
             sol_dir = 'programs/' + todo 
             language = language_identification(sol_dir)
-            compaire_all_files_in_dir(sol_dir, language, 'utf-8')
+            compaire_all_files_in_dir(sol_dir, "shingle", language, 'utf-8', 20, True)
         except Exception as err: 
             print("Incorrect argument. " + str(err))
     
