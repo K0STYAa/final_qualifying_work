@@ -24,7 +24,8 @@ language_dict = {
 
 algorithm_func_dict = {
     'shingle': 'shingle_compaire_2_files',
-    'jaccard': 'Jaccard_compaire_2_files'
+    'jaccard': 'Jaccard_compaire_2_files',
+    'ochiai': 'Ochiai_compaire_2_files'
 }
 
 

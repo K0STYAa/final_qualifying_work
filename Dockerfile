@@ -1,7 +1,7 @@
 FROM python:3.10-slim
 
 COPY . .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 WORKDIR /
 ENTRYPOINT python flask_server.py
