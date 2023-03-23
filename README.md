@@ -5,29 +5,25 @@
 - GET:       /file-upload         - Интерфейс для загрузки архива.
 - POST:      /file-upload         - Загружает zip архив с программами и проверяет их на плагиат.
 
-### <u>Для запуска приложения (Предварительно должны быть установлены docker и docker-compose):</u>
+### <u>Для запуска приложения (Предварительно долежн быть установлен docker):</u>
+
 ```
 make build && make run
 ```
 
-### Если требуется прекратить работу сервиса:
-```
-make app_down
-```
-
 ### To send test zip archive to server:
 
-- ```
-    make test
-    ```
+```
+make test
+```
 
-- ```
-    curl -X POST -F 'file=@programs/different_qsort_solutions.zip' http://127.0.0.1/file-upload
-    ```
 ### Or send your own archive:
-- using a request similar to the above
+- using a cURL request
     ```
-    curl -X POST -F 'file=@path/to/your/archive.zip' http://127.0.0.1/file-upload
+    curl -X POST \
+        -F 'algorithm=shingle(or jaccard)' \
+        -F 'file=@your/path/to/file.zip' \
+        http://127.0.0.1:80/file-upload
     ```
 
 - send through [graphic interface](http://127.0.0.1/).
