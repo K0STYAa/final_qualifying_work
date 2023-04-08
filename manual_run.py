@@ -1,23 +1,20 @@
 # -*- coding: UTF-8 -*-
-from logging import exception
 import os
 import sys
-from tabnanny import check
 import pandas as pd
 # from IPython.display import display
 import collections
 import zipfile
 import shutil
-import json
 
 import compaire_algorithms
 
 import time
-import constant
 
 language_dict = {
     'python': [".py"],
     'C': [".c"],
+    'Cpp': [".cpp", ".CPP"],
     'pascal': [".PAS", ".pas"],
     'assembler': [".ASM", ".asm"]
 }
@@ -60,9 +57,9 @@ def language_identification (sol_dir):
                             return language
             if os.path.isdir(fullname):
                  return language_identification(fullname)
-        raise Exception("No program files in directory.")
+        raise Exception("No program files in directory")
     else:
-        raise Exception("No such directory exists.")
+        raise Exception("No such directory exists")
 
 
 def compaire_all_files_in_dir (sol_dir, algorithm, language, cod, lim, comments_ignore=True):
@@ -82,25 +79,33 @@ def compaire_all_files_in_dir (sol_dir, algorithm, language, cod, lim, comments_
     for _ in range(len(filenames_list)):
         df_output.append([0] * len(filenames_list))
 
+    clear_files = []
+    for filename_number in range(len(filenames_list)):
+        text = compaire_algorithms.get_text(filenames_list[filename_number], cod, comments_ignore)
+        text_set, text_arr = compaire_algorithms.genshingle(text)
+        clear_files.append({"text_set": text_set, "text_arr": text_arr})
+
     for filename1_number in range(len(filenames_list)):
+        df_output[filename1_number][filename1_number] = 1
         for filename2_number in range(filename1_number, len(filenames_list)):
             if filename1_number != filename2_number:
-                filename1=filenames_list[filename1_number]
-                filename2=filenames_list[filename2_number]
                 
                 compaire_2_files = getattr(compaire_algorithms, algorithm_func_dict[algorithm])
-                new_value = compaire_2_files(filename1, filename2, cod, comments_ignore)
+                new_value = compaire_2_files(clear_files[filename1_number], clear_files[filename2_number])
 
                 # Write suspects
-                name1 = filename1.split('/')
-                name1 = name1[len(name1)-1]
-                name2 = filename2.split('/')
-                name2 = name2[len(name2)-1]
+                def get_f_name(filename_number):
+                    filename=filenames_list[filename_number]
+                    name = filename.split('/')
+                    return name[len(name)-1]
+                name1 = get_f_name(filename1_number)
+                name2 = get_f_name(filename2_number)
                 if new_value >= lim:
                     addDict = {"1st_suspect":name1, "2nd_suspect":name2, "similarity": new_value}
                     suspects.append(addDict)
 
                 df_output[filename1_number][filename2_number] = new_value
+                df_output[filename2_number][filename1_number] = new_value
                 
                 new_dict = collections.Counter()
                 new_dict[new_value] = 1
@@ -110,7 +115,8 @@ def compaire_all_files_in_dir (sol_dir, algorithm, language, cod, lim, comments_
     response["suspects"] = suspects
 
     df = pd.DataFrame(df_output)
-    # display(df)
+    # print(df_output)
+    # df.to_csv("tmp.csv")
     # print(response)
 
     return(response, df)
@@ -118,10 +124,19 @@ def compaire_all_files_in_dir (sol_dir, algorithm, language, cod, lim, comments_
 
 def check_in_uploaded_files(filename, algorithm, lim, comments_ignore=True):
     dir_name = filename.split('.')[0]
+    if filename == "zip":
+        filename = "zip.zip"
+        os.rename("uploads/zip", "uploads/zip.zip")
     with zipfile.ZipFile(f"uploads/{filename}", 'r') as zip_ref:
         zip_ref.extractall(f"uploads/{dir_name}")
     sol_dir = f"uploads/{dir_name}"
-    language = language_identification(sol_dir)
+    try:
+        language = language_identification(sol_dir)
+    except Exception as err:
+            response = {"error": str(err)}
+            print(str(err))
+            return response, None
+
 
     response, df = compaire_all_files_in_dir(sol_dir, algorithm, language, 'utf-8', lim, comments_ignore)
 

@@ -49,8 +49,9 @@ def upload_file():
 
             data, df = check_in_uploaded_files(filename, algorithm, lim, comments_ignore)
 
-            temp = df.to_dict('records')
-            columnNames = df.columns.values
+            if df is not None:
+                temp = df.to_dict('records')
+                columnNames = df.columns.values
             if table_ignore:
                 return render_template('record.html', output=data, lim=lim)
             return render_template('record.html', records=temp, colnames=columnNames, output=data, lim=lim)

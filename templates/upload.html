@@ -12,6 +12,12 @@
                 text-decoration: none;
                 border-radius: 3px;
             }
+            select {
+                margin: 5px;
+            }
+            input {
+                margin: 5px;
+            }
         </style>
     </head>
     <body>
@@ -19,11 +25,11 @@
         <form method=post enctype=multipart/form-data>
             <input type=file name=file>
             <input type=submit value=Upload><Br> 
-            <select name="algorithm" id="algorithm-select" required>
-                <option value="">--Please choose compaire algorithm--</option>
-                <option value="shingle">Shingle algorithm</option>
+            <select name="algorithm" id="algorithm-select">
+                <option value="shingle" selected>Shingle algorithm</option>
                 <option value="jaccard">Jaccard algorithm</option>
-                <option value="ochiai">Squared measure of Ochiai</option>
+                <!-- <option value="ochiai">Squared measure of Ochiai</option> -->
+                <option value="ochiai">Ochiai measure</option>
                 <option value="levenshtein">Levenshtein distance</option>
             </select><Br>
             <input type="checkbox" name="comments" value="True">Keep comments<Br> 

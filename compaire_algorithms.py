@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
+from math import sqrt
 import os
 import codecs
 import re
 import constant
-import editdistance
+import textdistance
 
 def get_text (filename, cod, comments_ignore):
 
@@ -25,79 +26,54 @@ def get_text (filename, cod, comments_ignore):
         return re.findall(r"[\w']+", text.replace('\n', ' ').lower())
 
 
-def genshingle (source, shingleLen):
+def genshingle (source):
     import binascii
-    out = set()
+    shingleLen = constant.NGRAM_LEN
+    out_set = set()
+    out_arr = []
     for i in range(len(source)-(shingleLen-1)):
-        out.add (binascii.crc32(' '.join( [x for x in source[i:i+shingleLen]] ).encode('utf-8')))
+        new = binascii.crc32(' '.join( [x for x in source[i:i+shingleLen]] ).encode('utf-8'))
+        out_arr.append(new)
+        out_set.add(new)
 
-    return out
-
-
-def shingle_compaire (source1, source2):
-    same_count = len(source1.intersection(source2))
-
-    value = round(same_count*2/float(len(source1) + len(source2))*100, 2)
-
-    return value
+    return out_set, out_arr
 
 
-def shingle_compaire_2_files (filename1, filename2, cod, comments_ignore=True):
+def shingle_compaire_2_files (text1, text2):
 
-    text1 = get_text(filename1, cod, comments_ignore) # Текст 1 для сравнения
-    text2 = get_text(filename2, cod, comments_ignore) # Текст 2 для сравнения
+    text1 = text1["text_set"]
+    text2 = text2["text_set"]
 
-    cmp1 = genshingle(text1, constant.NGRAM_LEN)
-    cmp2 = genshingle(text2, constant.NGRAM_LEN)
+    same_count = len(text1.intersection(text2))
 
-    return shingle_compaire(cmp1,cmp2)
+    return round(same_count*2/float(len(text1) + len(text2))*100, 2)
 
+def Jaccard_compaire_2_files (text1, text2):
 
-def Jaccard_index_compare (source1, source2):
-    same_count = len(source1.intersection(source2))
-    source_count = len(source1.union(source2))
+    text1 = text1["text_set"]
+    text2 = text2["text_set"]
 
-    value = round(float(same_count)/source_count*100, 2)
+    same_count = len(text1.intersection(text2))
+    source_count = len(text1.union(text2))
 
-    return value
+    return round(float(same_count)/source_count*100, 2)
 
+def Ochiai_compaire_2_files (text1, text2):
 
-def Jaccard_compaire_2_files (filename1, filename2, cod, comments_ignore=True):
+    text1 = text1["text_set"]
+    text2 = text2["text_set"]
 
-    text1 = get_text(filename1, cod, comments_ignore) # Текст 1 для сравнения
-    text2 = get_text(filename2, cod, comments_ignore) # Текст 2 для сравнения
+    same_count = len(text1.intersection(text2))
 
-    cmp1 = genshingle(text1, constant.NGRAM_LEN)
-    cmp2 = genshingle(text2, constant.NGRAM_LEN)
-
-    return Jaccard_index_compare(cmp1,cmp2)
+    return round(sqrt(float(same_count**2)/(len(text1) * len(text2)))*100, 2)
 
 
-def Otsuka_Ochiai_square_coefficient(source1, source2):
-    same_count = len(source1.intersection(source2))
+def Levenshtein_distance_compaire_2_files (text1, text2):
 
-    value = round(float(same_count**2)/(len(source1) * len(source2))*100, 2)
+    text1 = text1["text_arr"]
+    text2 = text2["text_arr"]
 
-    return value
-
-
-def Ochiai_compaire_2_files (filename1, filename2, cod, comments_ignore=True):
-
-    text1 = get_text(filename1, cod, comments_ignore) # Текст 1 для сравнения
-    text2 = get_text(filename2, cod, comments_ignore) # Текст 2 для сравнения
-
-    cmp1 = genshingle(text1, constant.NGRAM_LEN)
-    cmp2 = genshingle(text2, constant.NGRAM_LEN)
-
-    return Otsuka_Ochiai_square_coefficient(cmp1,cmp2)
-
-
-def Levenshtein_distance_compaire_2_files (filename1, filename2, cod, comments_ignore=True):
-
-    text1 = get_text(filename1, cod, comments_ignore) # Текст 1 для сравнения
-    text2 = get_text(filename2, cod, comments_ignore) # Текст 2 для сравнения
-
-    distance = editdistance.eval(text1, text2)
+    distance = textdistance.levenshtein.distance(text1, text2)
     source_len = max(len(text1), len(text2))
 
-    return round(float(source_len - distance)/source_len*100, 2)
+    return round((1.0-float(distance)/source_len)*100, 2)

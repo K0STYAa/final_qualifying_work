@@ -34,6 +34,8 @@
         <p align="center">
             <a href="/file-upload" class="btn">Send another file</a>
         </p>
+        <!--#if expr="условие1"-->
+        {% if output["error"] == null %}
         <h1>
             {{output["folder"]}}
         </h1>
@@ -67,6 +69,11 @@
                 <div> {{ value }} </div>
             {% endfor %}<br>
         {% endfor %}
+        {% else %}
+        <h1>
+            {{output["error"]}}
+        </h1>
+        {% endif %}
 
     </body>
 </html>
