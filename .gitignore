@@ -4,3 +4,4 @@ uploads/*
 !uploads/*.md
 *.json
 note.txt
+notebook.py

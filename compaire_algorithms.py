@@ -23,32 +23,36 @@ def get_text (filename, cod, comments_ignore):
             if file_extension in [".pas", ".PAS"]:
                 text = re.sub('//.*?\n|{.*?}', '', text)
 
+        # if file_extension in [".c", ".C", ".cpp", ".CPP"]:
+        #     text = re.sub('printf.*?\n|/\*.*?\*/', '', text)
+        #     text = re.sub('scanf.*?\n|/\*.*?\*/', '', text)
+
         return re.findall(r"[\w']+", text.replace('\n', ' ').lower())
 
 
 def genshingle (source):
-    import binascii
+    from binascii import crc32
     shingleLen = constant.NGRAM_LEN
     out_set = set()
     out_arr = []
     for i in range(len(source)-(shingleLen-1)):
-        new = binascii.crc32(' '.join( [x for x in source[i:i+shingleLen]] ).encode('utf-8'))
+        new = crc32(' '.join( [x for x in source[i:i+shingleLen]] ).encode('utf-8'))
         out_arr.append(new)
         out_set.add(new)
 
     return out_set, out_arr
 
 
-def shingle_compaire_2_files (text1, text2):
+# def shingle_compaire_2_files (text1:set, text2:set):
 
-    text1 = text1["text_set"]
-    text2 = text2["text_set"]
+#     text1 = text1["text_set"]
+#     text2 = text2["text_set"]
 
-    same_count = len(text1.intersection(text2))
+#     same_count = len(text1.intersection(text2))
 
-    return round(same_count*2/float(len(text1) + len(text2))*100, 2)
+#     return round(same_count*2/float(len(text1) + len(text2))*100, 2)
 
-def Jaccard_compaire_2_files (text1, text2):
+def Jaccard_compaire_2_files (text1:set, text2:set):
 
     text1 = text1["text_set"]
     text2 = text2["text_set"]
@@ -58,7 +62,7 @@ def Jaccard_compaire_2_files (text1, text2):
 
     return round(float(same_count)/source_count*100, 2)
 
-def Ochiai_compaire_2_files (text1, text2):
+def Ochiai_compaire_2_files (text1:set, text2:set):
 
     text1 = text1["text_set"]
     text2 = text2["text_set"]
@@ -68,7 +72,7 @@ def Ochiai_compaire_2_files (text1, text2):
     return round(sqrt(float(same_count**2)/(len(text1) * len(text2)))*100, 2)
 
 
-def Levenshtein_distance_compaire_2_files (text1, text2):
+def Levenshtein_distance_compaire_2_files (text1:list, text2:list):
 
     text1 = text1["text_arr"]
     text2 = text2["text_arr"]

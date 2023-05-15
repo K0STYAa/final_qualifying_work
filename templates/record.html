@@ -63,16 +63,26 @@
                 {% endfor %}
             </tbody>
         </table>
-        <h3>Suspects (first suspect, second suspect and similarity):</h3>
-        {% for item in output["suspects"] %}
-            {% for key, value in item.items() %}
-                <div> {{ value }} </div>
-            {% endfor %}<br>
-        {% endfor %}
-        {% else %}
-        <h1>
-            {{output["error"]}}
-        </h1>
+
+        <h3>Suspects:</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>{{ '1st_suspect' }}</th>
+                    <th>{{ '2nd_suspect' }}</th>
+                    <th>{{ 'similarity' }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in output["suspects"] %}
+                <tr>
+                    <td>{{ item['1st_suspect'] }}</td>
+                    <td>{{ item['2nd_suspect'] }}</td>
+                    <td>{{ item['similarity'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         {% endif %}
 
     </body>

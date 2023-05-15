@@ -8,6 +8,8 @@ import zipfile
 import shutil
 
 import compaire_algorithms
+import synthetic_plagiarism
+import constant
 
 import time
 
@@ -20,7 +22,7 @@ language_dict = {
 }
 
 algorithm_func_dict = {
-    'shingle': 'shingle_compaire_2_files',
+    # 'shingle': 'shingle_compaire_2_files',
     'jaccard': 'Jaccard_compaire_2_files',
     'ochiai': 'Ochiai_compaire_2_files',
     'levenshtein': 'Levenshtein_distance_compaire_2_files'
@@ -42,7 +44,7 @@ def files_list_in_dir (sol_dir, language):
         if os.path.isdir(fullname):
             filenames_list += files_list_in_dir(fullname, language)
 
-    return filenames_list
+    return sorted(filenames_list)
 
 def language_identification (sol_dir):
     if os.path.exists(sol_dir):
@@ -84,9 +86,13 @@ def compaire_all_files_in_dir (sol_dir, algorithm, language, cod, lim, comments_
         text = compaire_algorithms.get_text(filenames_list[filename_number], cod, comments_ignore)
         text_set, text_arr = compaire_algorithms.genshingle(text)
         clear_files.append({"text_set": text_set, "text_arr": text_arr})
+        
+        # add synthetic files
+        # print(filenames_list[filename_number])
+        # synthetic_plagiarism.add_changed_file(filenames_list[filename_number])
 
     for filename1_number in range(len(filenames_list)):
-        df_output[filename1_number][filename1_number] = 1
+        # df_output[filename1_number][filename1_number] = 100
         for filename2_number in range(filename1_number, len(filenames_list)):
             if filename1_number != filename2_number:
                 
@@ -105,17 +111,18 @@ def compaire_all_files_in_dir (sol_dir, algorithm, language, cod, lim, comments_
                     suspects.append(addDict)
 
                 df_output[filename1_number][filename2_number] = new_value
-                df_output[filename2_number][filename1_number] = new_value
+                # df_output[filename2_number][filename1_number] = new_value
                 
                 new_dict = collections.Counter()
                 new_dict[new_value] = 1
                 dict_counter.update(new_dict)
 
 
-    response["suspects"] = suspects
+    response["suspects"] = sorted(suspects, key=lambda d: d['similarity'], reverse=True)
 
     df = pd.DataFrame(df_output)
-    # print(df_output)
+    print({"algorithm":algorithm, "N": constant.NGRAM_LEN, "language": language, "df": df_output},",")
+    print(response)
     # df.to_csv("tmp.csv")
     # print(response)
 
@@ -137,13 +144,13 @@ def check_in_uploaded_files(filename, algorithm, lim, comments_ignore=True):
             print(str(err))
             return response, None
 
-
+    # for algorithm_key, _ in algorithm_func_dict.items():
+    #         response, df = compaire_all_files_in_dir(sol_dir, algorithm_key, language, 'utf-8', lim, comments_ignore)
     response, df = compaire_all_files_in_dir(sol_dir, algorithm, language, 'utf-8', lim, comments_ignore)
 
     # delete_all_files_and_dir
     os.remove(f"uploads/{filename}")
     shutil.rmtree(f"uploads/{dir_name}")
-
     return response, df
 
 

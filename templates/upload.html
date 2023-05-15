@@ -26,14 +26,14 @@
             <input type=file name=file>
             <input type=submit value=Upload><Br> 
             <select name="algorithm" id="algorithm-select">
-                <option value="shingle" selected>Shingle algorithm</option>
-                <option value="jaccard">Jaccard algorithm</option>
+                <!-- <option value="shingle" selected>Shingle algorithm</option> -->
                 <!-- <option value="ochiai">Squared measure of Ochiai</option> -->
-                <option value="ochiai">Ochiai measure</option>
+                <option value="ochiai" selected>Ochiai measure</option>
+                <option value="jaccard">Jaccard algorithm</option>
                 <option value="levenshtein">Levenshtein distance</option>
             </select><Br>
             <input type="checkbox" name="comments" value="True">Keep comments<Br> 
-            <input type="checkbox" name="table" value="True">Show table<Br>
+            <input type="checkbox" name="table" value="True">Show debug table<Br>
             <label> The critical part of the similarity: </label>
             <input type="number" name="lim" min="0" max="100" value="20">
         </form>
